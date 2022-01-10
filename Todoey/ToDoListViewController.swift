@@ -27,18 +27,12 @@ class ToDoListViewController: UITableViewController {
         return cell
     }
     
-//    func tableView(_ tableView: UITableView, didSelectRowAtIndexPath indexPath: IndexPath) {
-//        print(items[indexPath.row])
-//    }
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        print(items[indexPath.row])
-        if let currentText = tableView.cellForRow(at: indexPath)?.textLabel?.text {
-            if currentText.starts(with: "✅") {
-                tableView.cellForRow(at: indexPath)?.textLabel?.text = items[indexPath.row]
-            } else {
-                tableView.cellForRow(at: indexPath)?.textLabel?.text =  "✅  " + currentText
-            }
+
+        if tableView.cellForRow(at: indexPath)?.accessoryType == .checkmark {
+            tableView.cellForRow(at: indexPath)?.accessoryType = .none
+        } else {
+            tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
         }
-        
     }
 }
