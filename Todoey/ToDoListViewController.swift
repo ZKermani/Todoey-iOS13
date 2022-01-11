@@ -11,10 +11,14 @@ import UIKit
 class ToDoListViewController: UITableViewController {
 
     var items = ["Job1", "Job2", "Job3"]
+    let userDefaults = UserDefaults()
 
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
+        if let safeItems = userDefaults.array(forKey: "ToDoList") as! [String]? {
+            items = safeItems
+        }
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -45,6 +49,7 @@ class ToDoListViewController: UITableViewController {
         alert.addAction(UIAlertAction(title: "Add", style: .default, handler: { action in
             self.items.append(newItem.text!)
             self.tableView.reloadData()
+            self.userDefaults.set(self.items, forKey: "ToDoList")
         }))
         
         alert.addTextField { textField in
