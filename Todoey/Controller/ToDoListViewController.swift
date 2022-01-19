@@ -7,17 +7,18 @@
 //
 
 import UIKit
+import CoreData
 
 class ToDoListViewController: UITableViewController {
 
     var items = [Item]()
     
-    let filePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("Items.plist")
+    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
 
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
-        loadData()
+        //loadData()
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -44,8 +45,9 @@ class ToDoListViewController: UITableViewController {
         let alert = UIAlertController(title: "Add new item", message: "", preferredStyle: .alert)
         
         alert.addAction(UIAlertAction(title: "Add", style: .default, handler: { action in
-            let item = Item()
+            let item = Item(context: self.context)
             item.title = newItem.text!
+            item.done = false
             self.items.append(item)
             self.tableView.reloadData()
             self.saveData()
@@ -60,26 +62,10 @@ class ToDoListViewController: UITableViewController {
     }
     
     func saveData() {
-        let encoder = PropertyListEncoder()
         do {
-            let encodedData = try encoder.encode(items)
-            try? encodedData.write(to: filePath)
+            try context.save()
         } catch {
-            print("Encoding has encountered an error \(error)")
-        }
-    }
-    
-    func loadData() {
-        let decoder = PropertyListDecoder()
-        do {
-            let data = try Data(contentsOf: filePath)
-            if let decodedData = try? decoder.decode([Item].self, from: data) {
-                items = decodedData
-            } else {
-                print("Decoding has encountered an error")
-            }
-        } catch {
-            print("Reading data has encountered an error \(error)")
+            print("Error while saving data \(error)")
         }
     }
 }
