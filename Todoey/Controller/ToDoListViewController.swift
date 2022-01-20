@@ -18,7 +18,7 @@ class ToDoListViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
-        //loadData()
+        loadData()
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -66,6 +66,16 @@ class ToDoListViewController: UITableViewController {
             try context.save()
         } catch {
             print("Error while saving data \(error)")
+        }
+    }
+    
+    func loadData() {
+        let fetchRequest = NSFetchRequest<Item>(entityName: "Item")
+        fetchRequest.returnsObjectsAsFaults = false
+        do {
+            items = try context.fetch(fetchRequest)
+        } catch {
+            print("Error while loading data \(error)")
         }
     }
 }
