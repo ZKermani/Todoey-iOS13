@@ -34,7 +34,7 @@ class ToDoListViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         items[indexPath.row].done = !items[indexPath.row].done
-        tableView.reloadData()
+        loadData()
         saveData()
     }
     
@@ -69,13 +69,37 @@ class ToDoListViewController: UITableViewController {
         }
     }
     
-    func loadData() {
-        let fetchRequest = NSFetchRequest<Item>(entityName: "Item")
-        fetchRequest.returnsObjectsAsFaults = false
+    func loadData(with fetchRequest: NSFetchRequest<Item> = NSFetchRequest<Item>(entityName: "Item")) {
+//        let fetchRequest = NSFetchRequest<Item>(entityName: "Item")
+//        fetchRequest.returnsObjectsAsFaults = false
         do {
             items = try context.fetch(fetchRequest)
         } catch {
             print("Error while loading data \(error)")
+        }
+        tableView.reloadData()
+    }
+}
+
+// MARK: - Search
+extension ToDoListViewController: UISearchBarDelegate {
+
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        
+        let fetchRequest             = NSFetchRequest<Item>(entityName: "Item")
+        fetchRequest.predicate       = NSPredicate(format: "title CONTAINS[cd] %@", searchBar.text!)
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
+        loadData(with: fetchRequest)
+
+    }
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        
+        if searchBar.text!.count == 0 {
+            DispatchQueue.main.async {
+                searchBar.resignFirstResponder()
+                self.loadData()
+            }
         }
     }
 }
