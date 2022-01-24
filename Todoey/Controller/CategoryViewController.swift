@@ -30,6 +30,18 @@ class CategoryViewController: UITableViewController {
         return cell
     }
     
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        performSegue(withIdentifier: "CategoryToItem", sender: self)
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "CategoryToItem" {
+            let VC = segue.destination as! ToDoListViewController
+            if let row = tableView.indexPathForSelectedRow?.row {
+                VC.category = categories[row]
+            }
+        }
+    }
     
     @IBAction func addButtonPressed(_ sender: UIBarButtonItem) {
         var newCategory = UITextField()
