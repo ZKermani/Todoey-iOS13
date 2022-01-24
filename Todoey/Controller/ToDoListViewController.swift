@@ -14,11 +14,14 @@ class ToDoListViewController: UITableViewController {
     var items = [Item]()
     
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
-    var category = Category()
+    var category : Category? {
+        didSet {
+            loadData(predicate: nil)
+        }
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        loadData(predicate: nil)
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -73,7 +76,7 @@ class ToDoListViewController: UITableViewController {
     func loadData(with fetchRequest: NSFetchRequest<Item> = NSFetchRequest<Item>(entityName: "Item"),
                   predicate: NSPredicate?) {
 
-        let defaultPredicat = NSPredicate(format: "itemToCategory == %@", category)
+        let defaultPredicat = NSPredicate(format: "itemToCategory == %@", category!)
         if let safePredicate = predicate {
             let compoundPredicat = NSCompoundPredicate(type: NSCompoundPredicate.LogicalType.and, subpredicates: [safePredicate, defaultPredicat])
              fetchRequest.predicate = compoundPredicat
